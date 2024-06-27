@@ -37,5 +37,5 @@ public class Product {
     private Set<Product> products;
 
     @OneToOne(mappedBy = "product")
-    private Product product;
+    private Subscriptions subscription;
 }
