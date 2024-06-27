@@ -23,4 +23,10 @@ public class Purchases {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Product product;
+
+
 }
