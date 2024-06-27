@@ -34,7 +34,7 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Product> products;
+    private Set<Purchases> purchases;
 
     @OneToOne(mappedBy = "product")
     private Subscriptions subscription;
