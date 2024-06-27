@@ -12,5 +12,8 @@ import java.util.Set;
 public class Customer extends User {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Purchases> purchases;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Subscriptions> subscriptions;
 }
