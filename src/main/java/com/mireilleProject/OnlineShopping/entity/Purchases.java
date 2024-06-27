@@ -7,15 +7,18 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "SUBSCRIPTIONS")
-public class Subscriptions {
+@Table(name = "PURCHASES")
+public class Purchases {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
-    private Date subscriptionDate;
+    private Double amount;
+
+    @Column
+    private Date purchaseDate;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
