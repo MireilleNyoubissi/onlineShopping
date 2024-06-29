@@ -25,10 +25,11 @@ public class UserController {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
         System.out.println(userDto);
-        User n = new User();
-        n.setName(userDto.getName());
-        n.setEmail(userDto.getEmail());
-        userRepository.save(n);
+        User newUser = new User();
+        newUser.setFirstName(userDto.getFirstName());
+        newUser.setLastName(userDto.getLastName());
+        newUser.setEmail(userDto.getEmail());
+        userRepository.save(newUser);
         return "Saved";
     }
 
@@ -67,7 +68,8 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id" + id + " doesn't exist");
         }
         User user = optionalUser.get();
-        user.setName(userDto.getName());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         userRepository.save(user);
         return  "User with id: " + id + " updated";
