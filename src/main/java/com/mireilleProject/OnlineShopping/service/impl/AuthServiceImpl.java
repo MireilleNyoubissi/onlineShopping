@@ -1,12 +1,15 @@
 package com.mireilleProject.OnlineShopping.service.impl;
 
-import com.mireilleProject.OnlineShopping.dto.AdminDto;
+import com.mireilleProject.OnlineShopping.dto.LoginDto;
+import com.mireilleProject.OnlineShopping.dto.RegisterDto;
 import com.mireilleProject.OnlineShopping.entity.Admin;
+import com.mireilleProject.OnlineShopping.entity.Role;
 import com.mireilleProject.OnlineShopping.repositories.AdminRepository;
-import com.mireilleProject.OnlineShopping.service.AdminService;
+import com.mireilleProject.OnlineShopping.repositories.RoleRepository;
+import com.mireilleProject.OnlineShopping.service.AuthService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,81 +19,91 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class AdminImpl implements AdminService, UserDetailsService {
+import org.springframework.stereotype.Service;
 
-    @Autowired
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+//@AllArgsConstructor
+@Service
+public class AuthServiceImpl implements AuthService {
+
     private AdminRepository adminRepository;
-
+    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
-
     private ModelMapper mapper;
-
     private AuthenticationManager authenticationManager;
 
-    public AdminImpl(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
 
-    public AdminImpl(ModelMapper mapper) {
+    public AuthServiceImpl(AdminRepository adminRepository,
+                             RoleRepository roleRepository,
+                             PasswordEncoder passwordEncoder,
+                             ModelMapper mapper,
+                             AuthenticationManager authenticationManager) {
+
+        this.adminRepository = adminRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
+        this.authenticationManager = authenticationManager;
+
     }
 
-
-
     @Override
-    public Admin findAdminByEmail(String email) {
-        return adminRepository.findByEmail(email);
+    public Optional<Admin> findAdminByEmail(String email) {
+        return adminRepository.findAdminByEmail(email);
     }
 
-
-
     @Override
-    public String registerAdmin(AdminDto adminDto) {
+    public String register(RegisterDto registerDto) {
 
         //Checks if email already exist in database
 
-        if(adminRepository.findByEmail(adminDto.getEmail()) != null) {
-            throw new EntityNotFoundException("Admin user not found");
+        if(adminRepository.existsByEmail(registerDto.getEmail())) {
+            throw new EntityNotFoundException("Email already exists");
         }
 
         Admin admin = new Admin();
-        admin.setPassword(passwordEncoder.encode(adminDto.getPassword()));
-        admin.setEmail(adminDto.getEmail());
-        admin.setFirstName(adminDto.getFirstName());
-        admin.setLastName(admin.getLastName());
+        admin.setFirstName(registerDto.getFirstName());
+        admin.setLastName(registerDto.getLastName());
+        admin.setEmail(registerDto.getEmail());
+        admin.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+        Set<Role> roles = new HashSet<>();
+        Role adminRole = roleRepository.findByName("ADMIN");
+        roles.add(adminRole);
+        admin.setRoles(roles);
+
+
         adminRepository.save(admin);
 
-        return "Admin user registered successfully";
+        return "Admin user has been registered successfully";
     }
 
     @Override
-    public String loginAdmin(AdminDto adminDto) {
+    public String login(LoginDto loginDto) {
 
-        Authentication authentication = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(adminDto.getEmail(), adminDto.getPassword()));
+        Authentication authentication = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "Admin user has logged in successfully";
+        return "Admin user has logged-in successfully";
     }
 
 
 
 
-    private AdminDto mapToDTO(Admin admin) {
+    private RegisterDto mapToDTO(Admin admin) {
 
-        AdminDto adminDto = mapper.map(admin, AdminDto.class);
-        return adminDto;
+        RegisterDto registerDto = mapper.map(admin, RegisterDto.class);
+        return registerDto;
     }
 
 
-    private Admin mapToEntity(AdminDto adminDto) {
+    private Admin mapToEntity(RegisterDto registerDto) {
 
-        Admin admin = mapper.map(adminDto, Admin.class);
+        Admin admin = mapper.map(registerDto, Admin.class);
         return admin;
     }
 
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
 }
