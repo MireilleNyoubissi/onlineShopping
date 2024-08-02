@@ -1,6 +1,6 @@
 package com.mireilleProject.OnlineShopping.repository;
 
-import org.apache.catalina.User;
+import com.mireilleProject.OnlineShopping.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
