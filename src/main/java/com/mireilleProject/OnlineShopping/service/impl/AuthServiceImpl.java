@@ -6,22 +6,20 @@ import com.mireilleProject.OnlineShopping.dto.UserDto;
 import com.mireilleProject.OnlineShopping.entities.User;
 import com.mireilleProject.OnlineShopping.repository.RoleRepository;
 import com.mireilleProject.OnlineShopping.repository.UserRepository;
-import com.mireilleProject.OnlineShopping.service.UserService;
+import com.mireilleProject.OnlineShopping.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private ModelMapper mapper;
@@ -37,18 +35,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    //Convert entity into dto
-    private UserDto mapToDto(User user) {
-        UserDto userDto = mapper.map(user, UserDto.class);
-        return userDto;
-    }
-
-    //Convert dto to entity
-    private User mapToEntity(UserDto userDto) {
-        User user = mapper.map(userDto, User.class);
-        return user;
-    }
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -77,6 +63,19 @@ public class UserServiceImpl implements UserService {
                 loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return "User has logged-in successfully";
+    }
+
+
+    //Convert entity into dto
+    private UserDto mapToDto(User user) {
+        UserDto userDto = mapper.map(user, UserDto.class);
+        return userDto;
+    }
+
+    //Convert dto to entity
+    private User mapToEntity(UserDto userDto) {
+        User user = mapper.map(userDto, User.class);
+        return user;
     }
 
 
