@@ -3,10 +3,7 @@ package com.mireilleProject.OnlineShopping.dto;
 import lombok.Data;
 
 @Data
-public class UserDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class LoginDto {
     private String email;
     private String password;
 }
