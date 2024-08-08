@@ -2,6 +2,9 @@ package com.mireilleProject.OnlineShopping.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name = "ROLES")
@@ -12,6 +15,11 @@ public class Role {
     private Long id;
     private String name;
 
-    @OneToOne(mappedBy = "role")
-    private User user;
+    @OneToMany(mappedBy = "role")
+    private Set<User> users;
+
+    public Role(String name){
+        this.name = name;
+    }
+
 }
